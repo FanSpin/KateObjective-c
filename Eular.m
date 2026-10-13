@@ -1,32 +1,27 @@
-%Eular's methods ODE
-%f(x) =x^2 dydx = 2*x
-
-%Not Used f(x) =x^2 dydx = 2*x
-%Not used dy/dx = x*y = f(x,y)
-%Not used dy = dx(x*y) = h*f=f(x*y)
-
 dy = @(x,y) x*y;
-f = @(x) exp(x^2 /2 );
+f  = @(x) exp(x.^2/2);
 
+x0 = 0;  xn = 1;  y0 = 1;  h = 0.1;
 
-x0 =0;    %Domain begin
-xn = 1;   %Domain end
-y = 1;     %y(0)=1
-h = 0.1;  %stepsize%try 0.5 the 0.1 then 0.01
+N = round((xn - x0)/h);
+x_vals = linspace(x0, xn, N+1);
+y_vals = zeros(1, N+1);
+y_vals(1) = y0;
 
-fprintf (' x    \t\t   y (Eular)  \t  y (analitcal)  \n') %data table header
-fprintf (' %f  \t  %f\t  %f\n'     , x0 , y , f(x0) ); %First Row of table (ics)
-
-for x = x0 : h : xn - h
-      y = y + dy(x,y)*h;
-      x = x + h;
-      fprintf (' %f  \t  %f\t  %f\n' , x , y , f(x) );
+for i = 1:N
+    y_vals(i+1) = y_vals(i) + dy(x_vals(i), y_vals(i)) * h;
 end
 
-%xlim([0 10])%ylim([-5 5]) After Plot
+fprintf('  x      y (Euler)   y (analytical)\n');
+for i = 1:N+1
+    fprintf('%5.1f   %8.4f   %8.4f\n', x_vals(i), y_vals(i), f(x_vals(i)));
+end
 
-plot(x,f(x),'b+')
-
-title('Fucked Up')
-xlim([0 2])
-ylim([0 2])
+plot(x_vals, y_vals, 'b+', 'MarkerSize', 8)
+hold on
+plot(x_vals, f(x_vals), 'r-')
+title('Euler Method: dy/dx = xy')
+xlabel('x'); ylabel('y')
+xlim([0 2]); ylim([0 2])
+legend('Euler', 'Analytical')
+grid on
